@@ -2,6 +2,7 @@
 #include "ui_gs_employee.h"
 
 #include <QMessageBox>
+
 #include "login.h"
 
 #include "gs_employee.h"
@@ -9,6 +10,8 @@
 #include "employee.h"
 
 #include"todolist_e.h"
+
+#include "arduino.h"
 
 //*************
 #include <QIntValidator>
@@ -18,7 +21,10 @@
 #include <QPrinter>
 
 //********
-
+#include <QPieSeries>
+#include <QBarSet>
+#include <QChartView>
+#include <QtWidgets>
 
 //************************************
 gs_employee::gs_employee(QWidget *parent) :
@@ -45,8 +51,18 @@ gs_employee::gs_employee(QWidget *parent) :
     ui->label_statust_e->setNum(nbreT);
 
 
+    QSqlQueryModel* model=new QSqlQueryModel();         //*********************combo box ID affichage
+    model->setQuery("select ID_E from DB_EMPLOYEE ");
+    ui->comboBox_id_mod->setModel(model);
+    ui->comboBox_id_mod_2->setModel(model);
+   ui->comboBox_id_mod_3->setModel(model);
 
-    //*********************
+   QSqlQueryModel* model2=new QSqlQueryModel();         //*********************combo box ID affichage
+   model2->setQuery("select ID_TASK_E from DB_EMPLOYEE_TODOLIST ");
+   ui->comboBox_id_task_1->setModel(model2);
+   ui->comboBox_id_task_2->setModel(model2);
+
+
 
 
 }
@@ -94,6 +110,19 @@ void gs_employee::on_pushButton_ajouter_e_clicked()
 
          ui->tab_employee->setModel(Etmp.afficher());
 
+
+         QSqlQueryModel* model=new QSqlQueryModel();         //*********************combo box ID affichage
+         model->setQuery("select ID_E from DB_EMPLOYEE ");
+         ui->comboBox_id_mod->setModel(model);
+         ui->comboBox_id_mod_2->setModel(model);
+        ui->comboBox_id_mod_3->setModel(model);
+
+        QSqlQueryModel* model2=new QSqlQueryModel();         //*********************combo box ID affichage
+        model2->setQuery("select ID_TASK_E from DB_EMPLOYEE_TODOLIST ");
+        ui->comboBox_id_task_1->setModel(model2);
+        ui->comboBox_id_task_2->setModel(model2);
+
+
          msgBox->show();
 
     }
@@ -107,16 +136,18 @@ void gs_employee::on_pushButton_ajouter_e_clicked()
 //************************************
 void gs_employee::on_pushButton_supprimer_e_clicked()
 {
-    employee E; E.setId(ui->lineEdit_idsupp_e->text().toInt());
+    employee E;
+    E.setId(ui->comboBox_id_mod_2->currentText().toInt());
     bool test=E.supprimer(E.getId());
     msgBox= new QMessageBox(this);
     if(test)
     {
 
         msgBox->setText("effectué");
-        ui->lineEdit_idsupp_e->clear();
+       // ui->lineEdit_idsupp_e->clear();
         ui->tab_employee->setModel(Etmp.afficher());
          msgBox->show();
+
      }
     else
         msgBox->setText("non effectué");
@@ -127,7 +158,7 @@ void gs_employee::on_pushButton_supprimer_e_clicked()
 
 void gs_employee::on_pushButton_modifier_e_clicked()
 {
-    int id=ui->lineEdit_idmod_e->text().toInt();
+     int id=ui->comboBox_id_mod->currentText().toInt();
     QString nom=ui->lineEdit_nommod_e->text();
     QString prenom=ui->lineEdit_prenommod_e->text();
     int cin=ui->lineEdit_cinmod_e->text().toInt();
@@ -145,7 +176,7 @@ void gs_employee::on_pushButton_modifier_e_clicked()
             bool test=E.modifier(id);
             if(test)
             {
-                ui->lineEdit_idmod_e->clear();
+                //ui->lineEdit_idmod_e->clear();
                  ui->lineEdit_nommod_e->clear();
                   ui->lineEdit_prenommod_e->clear();
                 ui->lineEdit_cinmod_e->clear();
@@ -222,7 +253,7 @@ void gs_employee::on_radioButton_triheure_e_toggled(bool checked)
 void gs_employee::on_pushButton_modifier_metier_clicked()
 {
 
-    int id=ui->lineEdit_idmetier1_e->text().toInt();
+    int id=ui->comboBox_id_mod_3->currentText().toInt();
     QString motpass=ui->lineEdit_motpassa_e->text();
     QString motpassn=ui->lineEdit_motpassn_e->text();
     QString motpassnv=ui->lineEdit_motpassnv_e->text();
@@ -287,57 +318,55 @@ void gs_employee::on_pushButton_modifiertask_e_clicked()
 
 void gs_employee::on_pushButton_3_clicked()
 {
-           QString strStream;
-            QTextStream out(&strStream);
+                QString strStream;
+                QTextStream out(&strStream);
+                const int rowCount = ui->tab_employee->model()->rowCount();
+                const int columnCount =ui->tab_employee->model()->columnCount();
 
 
-            const int rowCount = ui->tab_employee->model()->rowCount();
-            const int columnCount = ui->tab_employee->model()->columnCount();
+                out <<  "<html>\n"
+                        "<head>\n"
+                        "<meta Content=\"Text/html; charset=Windows-1251\">\n"
+                        <<  QString("<title>%1</title>\n").arg("eleve")
+                        <<  "</head>\n"
+                        "<body bgcolor=#CFC4E1 link=#5000A0>\n"
+                            "<h1>Liste des Evenements</h1>"
 
+                            "<table border=1 cellspacing=0 cellpadding=2>\n";
 
-            out <<  "<html>\n"
-                   "<head>\n"
-
-                   "<meta Content=\"Text/html; charset=Windows-1251\">\n"
-                   <<  QString("<title>%60 les postes</title>\n").arg("poste")
-                  <<  "</head>\n"
-                   "<body bgcolor=#ffffff link=#5000A0>\n"
-                   "<table border=1 cellspacing=0 cellpadding=2>\n";
-                   out << "<thead><tr bgcolor=#f0f0f0>";
-                   for (int column = 0; column < columnCount; column++)
-                   if (! ui->tab_employee->isColumnHidden(column))
-                   out << QString("<th>%1</th>").arg(ui->tab_employee->model()->headerData(column, Qt::Horizontal).toString());
-                   out << "</tr></thead>\n";
-
-                   for (int row = 0; row < rowCount; row++) {
-                        out << "<tr>";
-                        for (int column = 0; column < columnCount; column++) {
-                          if (!ui->tab_employee->isColumnHidden(column)) {
-                           QString data = ui->tab_employee->model()->data(ui->tab_employee->model()->index(row, column)).toString().simplified();
-                           out << QString("<td bkcolor=0>%1</td>").arg((!data.isEmpty()) ? data : QString("&nbsp;"));
-                              }
+                // headers
+                    out << "<thead><tr bgcolor=#f0f0f0>";
+                    for (int column = 0; column < columnCount; column++)
+                        if (!ui->tab_employee->isColumnHidden(column))
+                            out << QString("<th>%1</th>").arg(ui->tab_employee->model()->headerData(column, Qt::Horizontal).toString());
+                    out << "</tr></thead>\n";
+                    // data table
+                       for (int row = 0; row < rowCount; row++) {
+                           out << "<tr>";
+                           for (int column = 0; column < columnCount; column++) {
+                               if (!ui->tab_employee->isColumnHidden(column)) {
+                                   QString data = ui->tab_employee->model()->data(ui->tab_employee->model()->index(row, column)).toString().simplified();
+                                   out << QString("<td bkcolor=0>%1</td>").arg((!data.isEmpty()) ? data : QString("&nbsp;"));
+                               }
                            }
-                         out << "</tr>\n";
-                           }
-                         out <<  "</table>\n"
-                                 "</body>\n"
-                                 "</html>\n";
+                           out << "</tr>\n";
+                       }
+                       out <<  "</table>\n"
+                           "</body>\n"
+                           "</html>\n";
 
-              QTextDocument *document = new QTextDocument();
-                            document->setHtml(strStream);
 
-             QPrinter printer;
 
-                QPrintDialog *dialog = new QPrintDialog(&printer, NULL);
-                           if (dialog->exec() == QDialog::Accepted)
-                           {
+        QTextDocument *document = new QTextDocument();
+        document->setHtml(strStream);
 
-                                document->print(&printer);
-                                Gs_employee = new gs_employee(this);
-                                Gs_employee->show();
-                            }
-                            delete document;
 
+        //QTextDocument document;
+        //document.setHtml(html);
+        QPrinter printer(QPrinter::PrinterResolution);
+        printer.setOutputFormat(QPrinter::PdfFormat);
+        printer.setOutputFileName("C:/QT pdf files/mypdf_file_employee.pdf");
+        document->print(&printer);
 }
 
 
@@ -380,6 +409,12 @@ void gs_employee::on_pushButton_ajoutertask_e_2_clicked()
            todolist_e e;
 
 
+           QSqlQueryModel* model2=new QSqlQueryModel();         //*********************combo box ID affichage
+           model2->setQuery("select ID_TASK_E from DB_EMPLOYEE_TODOLIST ");
+           ui->comboBox_id_task_1->setModel(model2);
+           ui->comboBox_id_task_2->setModel(model2);
+
+
            int nbreT=e.nbre_totale(); //Hedha
            int nbreTP=e.nbre_totalep();
            int nbreTD=e.nbre_totaled();
@@ -402,12 +437,12 @@ void gs_employee::on_pushButton_ajoutertask_e_2_clicked()
 
 }
 
-void gs_employee::on_pushButton_supprimer_e_2_clicked()
+void gs_employee::on_pushButton_supprimer_e_2_clicked()  //mmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmm
 {
 
     //SUpprimer
     todolist_e E;
-    E.setId_task(ui->lineEdit_idsupptask_e->text().toInt());
+    E.setId_task(ui->comboBox_id_task_1->currentText().toInt());
     bool test=E.supprimer_task(E.getId_task());
     msgBox= new QMessageBox(this);
     if(test)
@@ -419,6 +454,11 @@ void gs_employee::on_pushButton_supprimer_e_2_clicked()
 
         todolist_e e;
 
+
+        QSqlQueryModel* model2=new QSqlQueryModel();         //*********************combo box ID affichage
+        model2->setQuery("select ID_TASK_E from DB_EMPLOYEE_TODOLIST ");
+        ui->comboBox_id_task_1->setModel(model2);
+        ui->comboBox_id_task_2->setModel(model2);
 
         int nbreT=e.nbre_totale(); //Hedha
         int nbreTP=e.nbre_totalep();
@@ -440,9 +480,9 @@ void gs_employee::on_pushButton_supprimer_e_2_clicked()
 
 }
 
-void gs_employee::on_pushButton_modifier_e_2_clicked()
+void gs_employee::on_pushButton_modifier_e_2_clicked() //mmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmm
 {
-    int id=ui->lineEdit_idmodtask2_e->text().toInt();
+    int id=ui->comboBox_id_task_1->currentText().toInt();
     QString etat=ui->comboBox_e->currentText();
 
     todolist_e e(etat);
@@ -456,6 +496,12 @@ void gs_employee::on_pushButton_modifier_e_2_clicked()
        // ui->tab_employee->setModel(Etmp.afficher());
         msgBox->setText("effectué");
         msgBox->show();
+
+
+        QSqlQueryModel* model2=new QSqlQueryModel();         //*********************combo box ID affichage
+        model2->setQuery("select ID_TASK_E from DB_EMPLOYEE_TODOLIST ");
+        ui->comboBox_id_task_1->setModel(model2);
+        ui->comboBox_id_task_2->setModel(model2);
 
         todolist_e e;
 
@@ -492,3 +538,56 @@ void gs_employee::on_pushButton_modifier_e_2_clicked()
     }
 
 }*/
+
+
+
+void gs_employee::on_pushButton_stat_clicked()
+{
+    QSqlQuery q1,q2,q3,q4;
+        qreal tot=0,c1=0,c2=0,c3=0;
+
+        q1.prepare("SELECT * FROM AVOCAT");
+        q1.exec();
+
+        q2.prepare("SELECT * FROM AVOCAT WHERE NB_AFF_G_AV >=0 and NB_AFF_G_AV <=25");
+        q2.exec();
+
+        q3.prepare("SELECT * FROM AVOCAT WHERE NB_AFF_G_AV >=26 and NB_AFF_G_AV <=75");
+        q3.exec();
+
+        q4.prepare("SELECT * FROM AVOCAT WHERE NB_AFF_G_AV >=76 ");
+        q4.exec();
+
+        while (q1.next()){tot++;}
+        while (q2.next()){c1++;}
+        while (q3.next()){c2++;}
+        while (q4.next()){c3++;}
+
+        c1=c1/tot;
+        c2=c2/tot;
+        c3=c3/tot;
+
+        // Define slices and percentage of whole they take up
+        QPieSeries *series = new QPieSeries();
+        series->append("0-25",c1);
+        series->append("26-75",c2);
+        series->append("76-",c3);
+
+
+
+
+        // Create the chart widget
+        QChart *chart = new QChart();
+
+        // Add data to chart with title and show legend
+        chart->addSeries(series);
+        chart->legend()->show();
+
+
+        // Used to display the chart
+        chartView = new QChartView(chart,ui->label_stat);
+        chartView->setRenderHint(QPainter::Antialiasing);
+        chartView->setMinimumSize(621,471);
+
+        chartView->show();
+}

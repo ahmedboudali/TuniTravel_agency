@@ -13,15 +13,45 @@
 #include "modifier_task.h"
 
 
+// Widget used to display charts
+#include <QtCharts/QChartView>
 
-#include <QChart>
+// Used to draw bars representing data provided
+// grouped into categories
+#include <QtCharts/QBarSeries>
+
+// Represents 1 set of bars in a bar chart
+#include <QtCharts/QBarSet>
+
+// Displays the color used to represent each
+// QBarSet
+#include <QtCharts/QLegend>
+
+// Adds categories to the charts axes
+#include <QtCharts/QBarCategoryAxis>
+
+// Used to create stacked bar charts
+#include <QtCharts/QHorizontalStackedBarSeries>
+
+// Used to create a line chart
+#include <QtCharts/QLineSeries>
+
+// Used to change names on axis
+#include <QtCharts/QCategoryAxis>
+
+// Used to make Pie Charts
+#include <QtCharts/QPieSeries>
+#include <QtCharts/QPieSlice>
+
+
+#include <QtCharts/QPieSeries>
 #include <QChartView>
 #include <QPieSeries>
 #include <QBarSet>
 #include <QChartView>
 #include <QtWidgets>
 
-
+#include "arduino.h"
 
 
 namespace Ui {
@@ -90,6 +120,10 @@ private slots:
 
     // void update_label();   // slot permettant la mise à jour du label état de la lampe 1,
      // ce slot est lancé à chaque réception d'un message de Arduino
+
+   //  void on_comboBox_id_mod_textHighlighted(const QString &arg1);
+
+     void on_pushButton_stat_clicked();
 
 private:
 

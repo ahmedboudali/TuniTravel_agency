@@ -16,27 +16,6 @@ login::login(QWidget *parent) :
    ui->label_signin_pic->setPixmap(pix.scaled(200,200,Qt::KeepAspectRatio));                                                              //el taswira eli bich t7otha fil login.ui (pt3.)
   // ui->tableWidget_pass->setModel(Etmp.afficher_m());
 
-   serial = new QSerialPort(); //Inicializa la variable Serial
-   arduino_available = false;
-
-   foreach (const QSerialPortInfo &serial_Info, QSerialPortInfo::availablePorts())
-   {
-       //Lee la información de cada puerto serial
-       qDebug()<<"Puerto: "<<serial_Info.portName();
-       portname = serial_Info.portName();
-       qDebug()<<"Vendor Id: "<<serial_Info.vendorIdentifier();
-       vendorId = serial_Info.vendorIdentifier();
-       qDebug()<<"Product Id: "<<serial_Info.productIdentifier();
-       productId = serial_Info.productIdentifier();
-       arduino_available = true;
-   }
-
-   if(arduino_available)
-   {
-       arduino_init();
-   }
-
-/*
 
    int ret=A.connect_arduino(); // lancer la connexion à arduino
    switch(ret){
@@ -50,7 +29,6 @@ login::login(QWidget *parent) :
     //le slot update_label suite à la reception du signal readyRead (reception des données).
 
 
-*/
 }
 
 login::~login()
@@ -77,17 +55,6 @@ void login::update_label()
 */
 
 
-
-void login::arduino_init()
-{
-    serial->setPortName(portname);
-    serial->setBaudRate(QSerialPort::Baud9600);
-    serial->setDataBits(QSerialPort::Data8);
-    serial->setParity(QSerialPort::NoParity);
-    serial->setStopBits(QSerialPort::OneStop);
-    serial->setFlowControl(QSerialPort::NoFlowControl);
-    serial->open(QIODevice::ReadWrite);
-}
 
 
 
@@ -123,19 +90,19 @@ void login::on_pushButton_signin_login_clicked()
         while(query.next()){i++;}
         if (i==1)  QMessageBox::information(this,"Login","User name and password are correct");
         if (i<1) //QMessageBox::warning(this,"Login","Incorrect Username or Password !");
+        {
+             A.write_to_arduino("2"); //envoyer 2 à arduino
             ui->label_etatlogin->setText("Incorrect Username or Password !");
+
+        }
         //if(i>1) QMessageBox::warning(this,"Login","duplique!");
     }
 
     if(i==1)
     {
 
-        if(serial->isWritable())
-        {
-            serial->write("1");
-            qDebug()<<"OK";
-        }
 
+            A.write_to_arduino("1"); //envoyer 1 à arduino
           hide();                                  //el menu eli bich n7ilo ki el login yi5dim (pt3.1)
           mainWindow = new MainWindow(this);       //el menu eli bich n7ilo ki el login yi5dim (pt3.2)
           mainWindow->show();                      //el menu eli bich n7ilo ki el login yi5dim (pt3.f)
@@ -175,13 +142,3 @@ bool login::createconnect()                     //el conection mta3 el oracle (p
 
 
 
-
-void login::on_pushButton_signin_login_2_clicked()
-{
-    if(serial->isReadable())
-    {
-         data=serial->readAll(); //récupérer les données reçues
-
-    }
-
-}
