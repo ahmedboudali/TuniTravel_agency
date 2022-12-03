@@ -26,7 +26,7 @@ MainWindow::~MainWindow()
 
 void MainWindow::on_pushButton_gs_e_clicked()
 {
-employee E;
+//employee E;
 hide();
 
 GS_employee= new gs_employee(this);
@@ -38,6 +38,7 @@ void MainWindow::on_pushButton_gs_c_clicked()
 {
     hide();
 GS_client = new gs_client(this);
+// this->GS_client->show();
+//GS_client->show();
 GS_client->exec();
-
 }
