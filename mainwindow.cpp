@@ -2,8 +2,9 @@
 #include "ui_mainwindow.h"
 #include "gs_employee.h"
 #include "gs_client.h"
+#include "dialog.h"
 #include <QPixmap>                                                                     //el taswira eli bich t7otha fil login.ui (pt1.)
-
+#include <QDialog>
 
 
 MainWindow::MainWindow(QWidget *parent)
@@ -26,7 +27,7 @@ MainWindow::~MainWindow()
 
 void MainWindow::on_pushButton_gs_e_clicked()
 {
-employee E;
+//employee E;
 hide();
 
 GS_employee= new gs_employee(this);
@@ -39,5 +40,11 @@ void MainWindow::on_pushButton_gs_c_clicked()
     hide();
 GS_client = new gs_client(this);
 GS_client->exec();
+}
 
+void MainWindow::on_pushButton_gs_f_clicked()
+{
+hide();
+dialog = new Dialog(this);
+dialog->exec();
 }

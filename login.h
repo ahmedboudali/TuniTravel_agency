@@ -41,9 +41,6 @@ private slots:
     void on_pushButton_signin_login_clicked();
 
 
-    void update_label();   // slot permettant la mise à jour du label état de la lampe 1,
-    // ce slot est lancé à chaque réception d'un message de Arduino
-
 
 
     void on_pushButton_signin_login_2_clicked();
@@ -57,27 +54,10 @@ private:
     employee Etmp,E;
 
 
-    QSerialPort *serial;
-    QString portname;
-    quint16 vendorId;
-    quint16 productId;
 
-    bool arduino_available;
-    void arduino_init();
+    QByteArray data; // variable contenant les données reçues
 
-
-    QByteArray data;  // contenant les données lues à partir d'Arduino
-
-
-
-
-/*
-QByteArray data; // variable contenant les données reçues
-Arduino A; // objet temporaire
-
-*/
-
-
+    Arduino A; // objet temporaire
 
 
 

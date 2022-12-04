@@ -14,14 +14,40 @@
 
 
 
-#include <QChart>
-#include <QChartView>
-#include <QPieSeries>
-#include <QBarSet>
-#include <QChartView>
-#include <QtWidgets>
+#include <QtWidgets/QWidget>
+#include <QtCharts/QChartGlobal>
+
+QT_BEGIN_NAMESPACE
+class QLineEdit;
+class QPushButton;
+class QCheckBox;
+class QComboBox;
+class QDoubleSpinBox;
+QT_END_NAMESPACE
+
+class PenTool;
+class BrushTool;
+class CustomSlice;
+
+QT_CHARTS_BEGIN_NAMESPACE
+class QChartView;
+class QPieSeries;
+class QPieSlice;
+QT_CHARTS_END_NAMESPACE
+class chartView;
+QT_CHARTS_USE_NAMESPACE
 
 
+#include <QtCharts/QPieSlice>
+
+QT_CHARTS_BEGIN_NAMESPACE
+class QAbstractSeries;
+QT_CHARTS_END_NAMESPACE
+
+QT_CHARTS_USE_NAMESPACE
+
+
+#include "arduino.h"
 
 
 namespace Ui {
@@ -36,18 +62,14 @@ public:
     explicit gs_employee(QWidget *parent = nullptr);
     ~gs_employee();
 
+void stat_todolist();
 private slots:
 
     void on_pushButton_ajouter_e_clicked();
      void on_pushButton_supprimer_e_clicked();
 
      void on_pushButton_modifier_e_clicked();
-
-     //void on_pushButton_clicked();
-
      void on_pushButton_2_clicked();
-
-     //void on_radioButton_trinom_e_clicked();
 
      void on_radioButton_trinom_e_toggled(bool checked);
 
@@ -57,23 +79,9 @@ private slots:
 
      void on_pushButton_modifier_metier_clicked();
 
-    // void on_pushButton_ajoutertask_e_clicked();
-
-    // void on_pushButton_5_clicked();
-
-    // void on_pushButton_ajoutertask_e_3_clicked();
-
-
-    // void on_pushButton_modifiertask_e_clicked();
-
-
      void on_pushButton_3_clicked();
 
      void on_lineEdit_idrecherche_e_textEdited(const QString &arg1);
-
-    // void on_lineEdit_idrecherche_e_textChanged(const QString &arg1);
-
-     //void on_lineEdit_idrecherche_e_editingFinished();
 
      void on_pushButton_ajoutertask_e_2_clicked();
 
@@ -81,21 +89,14 @@ private slots:
 
      void on_pushButton_modifier_e_2_clicked();
 
-    // void on_pushButton_chart_clicked();
+     void on_pushButton_stat_clicked();
 
-   //  void on_lineEdit_idrecherchetodo_e_textEdited(const QString &arg1);
-
-    // void on_lineEdit_idrecherche_e_cursorPositionChanged(int arg1, int arg2);
-
-
-    // void update_label();   // slot permettant la mise à jour du label état de la lampe 1,
-     // ce slot est lancé à chaque réception d'un message de Arduino
 
 private:
 
     Ui::gs_employee *ui;
     employee Etmp,E;
-    
+
     ajouter_task *Ajouter_task;
     supprimer_task *Supprimer_task;
     modifier_task *Modifier_task;
@@ -103,11 +104,14 @@ private:
 
     gs_employee *Gs_employee;
 
+
+    QChartView *m_chartView;
+    QPieSeries *m_series;
+    CustomSlice *m_slice;
+
 };
 
 
 
 
 #endif // GS_EMPLOYEE_H
-
-

@@ -6,6 +6,7 @@
 #include <QMainWindow>
 #include "gs_employee.h"
 #include "gs_client.h"
+#include "dialog.h"
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class MainWindow; }
@@ -24,11 +25,15 @@ private slots:
 
     void on_pushButton_gs_c_clicked();
 
+
+
+    void on_pushButton_gs_f_clicked();
+
 private:
     Ui::MainWindow *ui;
     gs_employee *GS_employee;
     gs_client *GS_client;
-
+   Dialog *dialog;
 };
 
 
