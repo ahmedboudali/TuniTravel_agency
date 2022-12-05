@@ -1,213 +1,99 @@
 #include "adresseemail.h"
-#include "client.h"
-/*adresseemail::adresseemail()
+#include <QSqlQuery>
+#include <QtDebug>
+#include <QVariant>
+
+
+int ExportExcelObject::export2Excel()
 {
-cin=0;add="";password="";
-
-}*/
-
-/*adresseemail::adresseemail(const QString &user, const QString &pass, const QString &host, int port, int timeout)
-{   socket = new QSslSocket(this);
-
-    connect(socket, SIGNAL(readyRead()), this, SLOT(readyRead()));
-    connect(socket, SIGNAL(connected()), this, SLOT(connected() ) );
-    connect(socket, SIGNAL(error(QAbstractSocket::SocketError)), this,SLOT(errorReceived(QAbstractSocket::SocketError)));
-    connect(socket, SIGNAL(stateChanged(QAbstractSocket::SocketState)), this, SLOT(stateChanged(QAbstractSocket::SocketState)));
-    connect(socket, SIGNAL(disconnected()), this,SLOT(disconnected()));
-
-
-    this->user = user;
-    this->pass = pass;
-
-    this->host = host;
-    this->port = port;
-    this->timeout = timeout;
-}
-
-void adresseemail::sendMail(const QString &from, const QString &to, const QString &subject, const QString &body)
-{
-    message = "To: " + to + "\n";
-    message.append("From: " + from + "\n");
-    message.append("Subject: " + subject + "\n");
-    message.append(body);
-    message.replace( QString::fromLatin1( "\n" ), QString::fromLatin1( "\r\n" ) );
-    message.replace( QString::fromLatin1( "\r\n.\r\n" ),
-    QString::fromLatin1( "\r\n..\r\n" ) );
-    this->from = from;
-    rcpt = to;
-    state = Init;
-    socket->connectToHostEncrypted(host, port); //"smtp.gmail.com" and 465 for gmail TLS
-    if (!socket->waitForConnected(timeout)) {
-         qDebug() << socket->errorString();
-     }
-
-    t = new QTextStream( socket );
-
-
-
-}
-
-adresseemail::~adresseemail()
-{
-    delete t;
-    delete socket;
-}
-void adresseemail::stateChanged(QAbstractSocket::SocketState socketState)
-{
-
-    qDebug() <<"stateChanged " << socketState;
-}
-
-void adresseemail::errorReceived(QAbstractSocket::SocketError socketError)
-{
-    qDebug() << "error " <<socketError;
-}
-
-void adresseemail::disconnected()
-{
-
-    qDebug() <<"disconneted";
-    qDebug() << "error "  << socket->errorString();
-}
-
-void adresseemail::connected()
-{
-    qDebug() << "Connected ";
-}
-
-void adresseemail::readyRead()
-{
-
-     qDebug() <<"readyRead";
-    // SMTP is line-oriented
-
-    QString responseLine;
-    do
+    if(fieldList.size() <= 0)
     {
-        responseLine = socket->readLine();
-        response += responseLine;
+        qDebug() << "ExportExcelObject::export2Excel failed: No fields defined.";
+        return -1;
     }
-    while ( socket->canReadLine() && responseLine[3] != ' ' );
 
-    responseLine.truncate( 3 );
-
-    qDebug() << "Server response code:" <<  responseLine;
-    qDebug() << "Server response: " << response;
-
-    if ( state == Init && responseLine == "220" )
+    QSqlDatabase db = QSqlDatabase::addDatabase("QODBC", "excelexport");
+    if(!db.isValid())
     {
-        // banner was okay, let's go on
-        *t << "EHLO localhost" <<"\r\n";
-        t->flush();
-
-        state = HandShake;
+        qDebug() << "ExportExcelObject::export2Excel failed: QODBC not supported.";
+        return -2;
     }
-    //No need, because I'm using socket->startClienEncryption() which makes the SSL handshake for you
-    /*else if (state == Tls && responseLine == "250")
+    // set the dsn string
+    QString dsn = QString("DRIVER={Microsoft Excel Driver (*.xls)};DSN='';FIRSTROWHASNAMES=1;READONLY=FALSE;CREATE_DB=\"%1\";DBQ=%2").
+                  arg(excelFilePath).arg(excelFilePath);
+    db.setDatabaseName(dsn);
+    if(!db.open())
     {
-        // Trying AUTH
-        qDebug() << "STarting Tls";
-        *t << "STARTTLS" << "\r\n";
-        t->flush();
-        state = HandShake;
-    }*/
-   /* else if (state == HandShake && responseLine == "250")
+        qDebug() << "ExportExcelObject::export2Excel failed: Create Excel file failed by DRIVER={Microsoft Excel Driver (*.xls)}.";
+        //QSqlDatabase::removeDatabase("excelexport");
+        return -3;
+    }
+
+    QSqlQuery query(db);
+
+    //drop the table if it's already exists
+    QString s, sSql = QString("DROP TABLE [%1] (").arg(sheetName);
+    query.exec(sSql);
+
+    //create the table (sheet in Excel file)
+    sSql = QString("CREATE TABLE [%1] (").arg(sheetName);
+    for (int i = 0; i < fieldList.size(); i++)
     {
-        socket->startClientEncryption();
-        if(!socket->waitForEncrypted(timeout))
+        s = QString("[%1] %2").arg(fieldList.at(i)->sFieldName).arg(fieldList.at(i)->sFieldType);
+        sSql += s;
+        if(i < fieldList.size() - 1)
+            sSql += " , ";
+    }
+
+    sSql += ")";
+    query.prepare(sSql);
+
+    if(!query.exec())
+    {
+        qDebug() << "ExportExcelObject::export2Excel failed: Create Excel sheet failed.";
+        //db.close();
+        //QSqlDatabase::removeDatabase("excelexport");
+        return -4;
+    }
+
+
+
+    //add all rows
+    sSql = QString("INSERT INTO [%1] (").arg(sheetName);
+    for (int i = 0; i < fieldList.size(); i++)
+    {
+        sSql += fieldList.at(i)->sFieldName;
+        if(i < fieldList.size() - 1)
+            sSql += " , ";
+    }
+    sSql += ") VALUES (";
+    for (int i = 0; i < fieldList.size(); i++)
+    {
+        sSql += QString(":data%1").arg(i);
+        if(i < fieldList.size() - 1)
+            sSql += " , ";
+    }
+    sSql += ")";
+
+    qDebug() << sSql;
+
+    int r, iRet = 0;
+    for(r = 0 ; r < tableView->model()->rowCount() ; r++)
+    {
+        query.prepare(sSql);
+        for (int c = 0; c < fieldList.size(); c++)
         {
-            qDebug() << socket->errorString();
-            state = Close;
+            query.bindValue(QString(":data%1").arg(c), tableView->model()->data(tableView->model()->index(r, fieldList.at(c)->iCol)));
         }
 
+        if(query.exec())
+            iRet++;
 
-        //Send EHLO once again but now encrypted
+        if(r % 10 == 0)
+            emit exportedRowCount(r);
+    }
 
-        *t << "EHLO localhost" << "\r\n";
-        t->flush();
-        state = Auth;
-    }
-    else if (state == Auth && responseLine == "250")
-    {
-        // Trying AUTH
-        qDebug() << "Auth";
-        *t << "AUTH LOGIN" << "\r\n";
-        t->flush();
-        state = User;
-    }
-    else if (state == User && responseLine == "334")
-    {
-        //Trying User
-        qDebug() << "Username";
-        //GMAIL is using XOAUTH2 protocol, which basically means that password and username has to be sent in base64 coding
-        //https://developers.google.com/gmail/xoauth2_protocol
-        *t << QByteArray().append(user).toBase64()  << "\r\n";
-        t->flush();
+    emit exportedRowCount(r);
 
-        state = Pass;
-    }
-    else if (state == Pass && responseLine == "334")
-    {
-        //Trying pass
-        qDebug() << "Pass";
-        *t << QByteArray().append(pass).toBase64() << "\r\n";
-        t->flush();
-
-        state = Mail;
-    }
-    else if ( state == Mail && responseLine == "235" )
-    {
-        // HELO response was okay (well, it has to be)
-
-        //Apperantly for Google it is mandatory to have MAIL FROM and RCPT email formated the following way -> <email@gmail.com>
-        qDebug() << "MAIL FROM:<" << from << ">";
-        *t << "MAIL FROM:<" << from << ">\r\n";
-        t->flush();
-        state = Rcpt;
-    }
-    else if ( state == Rcpt && responseLine == "250" )
-    {
-        //Apperantly for Google it is mandatory to have MAIL FROM and RCPT email formated the following way -> <email@gmail.com>
-        *t << "RCPT TO:<" << rcpt << ">\r\n"; //r
-        t->flush();
-        state = Data;
-    }
-    else if ( state == Data && responseLine == "250" )
-    {
-
-        *t << "DATA\r\n";
-        t->flush();
-        state = Body;
-    }
-    else if ( state == Body && responseLine == "354" )
-    {
-
-        *t << message << "\r\n.\r\n";
-        t->flush();
-        state = Quit;
-    }
-    else if ( state == Quit && responseLine == "250" )
-    {
-
-        *t << "QUIT\r\n";
-        t->flush();
-        // here, we just close.
-        state = Close;
-        emit status( tr( "Message sent" ) );
-    }
-    else if ( state == Close )
-    {
-        deleteLater();
-        return;
-    }
-    else
-    {
-        // something broke.
-        QMessageBox::warning( 0, tr( "Qt Simple SMTP client" ), tr( "Unexpected reply from SMTP server:\n\n" ) + response );
-        state = Close;
-        emit status( tr( "Failed to send message" ) );
-    }
-    response = "";
-}*/
-
-
+    return iRet;
+}

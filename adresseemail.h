@@ -1,64 +1,52 @@
-#ifndef ADRESSEEMAIL_H
-#define ADRESSEEMAIL_H
-#include <QSqlQueryModel>
-#include <QDialog>
-#include <QSqlQueryModel>
-#include <QSqlQuery>
-#include <QString>
-#include <QtNetwork/QAbstractSocket>
-#include <QtNetwork/QSslSocket>
-#include <QString>
-#include <QTextStream>
-#include <QDebug>
-#include <QtWidgets/QMessageBox>
-#include <QByteArray>
-#include <QString>
-#include <QSslSocket>
+#ifndef EXPORTEXCELOBJECT_H
+#define EXPORTEXCELOBJECT_H
 #include <QObject>
-class adresseemail
+#include <QTableView>
+#include <QStringList>
+#include <QSqlDatabase>
+class exportexcelobject
 {
 public:
-    adresseemail();
-    ~adresseemail();
-    adresseemail( const QString &user, const QString &pass, const QString &host, int port = 465, int timeout = 30000 );
-    void sendMail( const QString &from, const QString &to,
-                      const QString &subject, const QString &body );
-
-   signals:
-       void status( const QString &);
-
-   private slots:
-       void stateChanged(QAbstractSocket::SocketState socketState);
-       void errorReceived(QAbstractSocket::SocketError socketError);
-       void disconnected();
-       void connected();
-       void readyRead();
-
-       /*int getcin();
-       QString getadd();
-       QString getpassword();
-       void setcin(int cin);
-       void setadd( QString add);
-       void setpassword( QString password);
-       bool ajouterE();
-       QSqlQueryModel* afficherE();
-       QSqlQueryModel * afficher_HI();*/
-
-
-   private:
-       int timeout;
-          QString message;
-          QTextStream *t;
-          QSslSocket *socket;
-          QString from;
-          QString rcpt;
-          QString response;
-          QString user;
-          QString pass;
-          QString host;
-          int port;
-          enum states{Tls, HandShake ,Auth,User,Pass,Rcpt,Mail,Data,Init,Body,Quit,Close};
-          int state;
+    exportexcelobject(const int ic, const QString &sf, const QString &st):
+        iCol(ic),sFieldName(sf),sFieldType(st){}
+    int     iCol;
+    QString sFieldName;
+    QString sFieldType;
 };
 
-#endif // ADRESSEEMAIL_H
+
+class ExportExcelObject : public QObject
+{
+    Q_OBJECT
+public:
+    ExportExcelObject(const QString &filepath, const QString &sheettitle,
+                      QTableView *tableview):excelFilePath(filepath),
+                      sheetName(sheettitle), tableView(tableview){}
+
+    ~ExportExcelObject() {QSqlDatabase::removeDatabase("excelexport");}
+
+public:
+    void setOutputFilePath(const QString &spath) {excelFilePath = spath;}
+    void setOutputSheetTitle(const QString &ssheet) {sheetName = ssheet;}
+    void setTableView(QTableView *tableview) {tableView = tableview;}
+
+    void addField(const int iCol, const QString &fieldname, const QString &fieldtype)
+         {fieldList << new exportexcelobject(iCol, fieldname, fieldtype);}
+
+    void removeAllFields()
+         {while (!fieldList.isEmpty()) delete fieldList.takeFirst();}
+
+    int export2Excel();
+
+signals:
+    void exportedRowCount(int row);
+
+private:
+    QString excelFilePath;
+    QString sheetName;
+    QTableView *tableView;
+    QList<exportexcelobject *> fieldList;
+};
+
+
+#endif // EXPORTEXCELOBJECT_H
