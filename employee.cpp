@@ -212,27 +212,27 @@ QSqlQueryModel* employee::tri_nom()
 //****************
 
 
-QSqlQueryModel * employee::recherche(QString id)
-{
-     QSqlQuery query;
+ QSqlQueryModel * employee::recherche(QString id)
+ {
+      QSqlQuery query;
 
 
 
-    QSqlQueryModel *model=new QSqlQueryModel();
+     QSqlQueryModel *model=new QSqlQueryModel();
 
-    model->setQuery("SELECT ID_E,NOM_E,PRENOM_E,CIN_E,TEL_E,SALAIRE_E,HEURDETRAVAIL_E FROM DB_EMPLOYEE  WHERE ID_E='"+id+"' or NOM_E='"+id+"' or PRENOM_E='"+id+"' or CIN_E='"+id+"' or TEL_E='"+id+"' or SALAIRE_E='"+id+"' or HEURDETRAVAIL_E='"+id+"' ");
+     model->setQuery("SELECT ID_E,NOM_E,PRENOM_E,CIN_E,TEL_E,SALAIRE_E,HEURDETRAVAIL_E FROM DB_EMPLOYEE  WHERE ID_E='"+id+"' or NOM_E='"+id+"' or PRENOM_E='"+id+"' or CIN_E='"+id+"' or TEL_E='"+id+"' or SALAIRE_E='"+id+"' or HEURDETRAVAIL_E='"+id+"' ");
 
-    query.bindValue(":ID_E",id);
-    query.bindValue(":NOM_E",id);
-    query.bindValue(":PRENOM_E",id);
-    query.bindValue(":CIN_E",id);
-   // query.bindValue(":MOTPASS_E",res);
-    query.bindValue(":TEL_E",id);
-    query.bindValue(":SALAIRE_E",id);
-    query.bindValue(":HEURDETRAVAIL_E",id);
+     query.bindValue(":ID_E",id);
+     query.bindValue(":NOM_E",id);
+     query.bindValue(":PRENOM_E",id);
+     query.bindValue(":CIN_E",id);
+    // query.bindValue(":MOTPASS_E",res);
+     query.bindValue(":TEL_E",id);
+     query.bindValue(":SALAIRE_E",id);
+     query.bindValue(":HEURDETRAVAIL_E",id);
 
-    return model;
-}
+     return model;
+ }
 //****************
 
 
@@ -259,8 +259,6 @@ QSqlQueryModel* employee::afficher_m()
 {
     QSqlQueryModel* model=new QSqlQueryModel();
     model->setQuery("select ID_E,MOTPASS_E from DB_EMPLOYEE_LOGIN");
-
-
     return model;
 
 

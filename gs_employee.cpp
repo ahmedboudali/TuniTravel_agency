@@ -375,15 +375,6 @@ void gs_employee::on_pushButton_3_clicked()
 void gs_employee::on_lineEdit_idrecherche_e_textEdited(const QString &arg1)
 {
 
-    QString id=ui->lineEdit_idrecherche_e->text();
-
-    ui->tab_employee->setModel(Etmp.recherche(id));
-    if (id=="")
-    {
-        ui->tab_employee->setModel(Etmp.afficher());
-
-    }
-
 }
 
 void gs_employee::on_pushButton_ajoutertask_e_2_clicked()
@@ -598,4 +589,17 @@ void gs_employee::stat_todolist()
         m_chartView->setRenderHint(QPainter::Antialiasing);
         m_chartView->setMinimumSize(280,280);
         m_chartView->show();
+}
+
+void gs_employee::on_lineEdit_idrecherche_e_textChanged(const QString &arg1)
+{
+
+    QString id=ui->lineEdit_idrecherche_e->text();
+
+    ui->tab_employee->setModel(Etmp.recherche(id));
+    if (id=="")
+    {
+        ui->tab_employee->setModel(Etmp.afficher());
+
+    }
 }

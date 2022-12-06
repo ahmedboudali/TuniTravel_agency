@@ -55,7 +55,7 @@ public:
     //*
     bool modifier(int);
     bool modifier_mot_passe(int,QString,QString);
-    QSqlQueryModel* recherche(QString );
+  QSqlQueryModel* recherche(QString );
     QString motpass_kdim(int);
     bool login(int,QString);
     QSqlQueryModel* afficher_task();

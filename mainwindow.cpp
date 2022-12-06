@@ -2,6 +2,7 @@
 #include "ui_mainwindow.h"
 #include "gs_employee.h"
 #include "gs_client.h"
+#include "gs_offre.h"
 #include "dialog.h"
 #include <QPixmap>                                                                     //el taswira eli bich t7otha fil login.ui (pt1.)
 #include <QDialog>
@@ -47,4 +48,11 @@ void MainWindow::on_pushButton_gs_f_clicked()
 hide();
 dialog = new Dialog(this);
 dialog->exec();
+}
+
+void MainWindow::on_pushButton_gs_o_clicked()
+{
+    hide();
+    Gs_offre = new gs_offre(this);
+    Gs_offre->exec();
 }
