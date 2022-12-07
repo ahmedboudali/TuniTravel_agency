@@ -35,7 +35,7 @@ void login::on_login_2_clicked()
     QString username = ui->linename->text();
        QString password = ui->linepass->text();
 
-       if(username=="admin" && password=="admin")
+       if(username=="eya" && password=="piwpiw")
        {
           QMessageBox::information(this,"Login","User name and password are correct");
           hide();

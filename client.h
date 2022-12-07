@@ -32,17 +32,17 @@ public:
     bool supprimer(int);
     bool modifier (int);
     QSqlQueryModel * recherche(int);
-//    QSqlQueryModel* afficherTri(int) ;
-  QSqlQueryModel * tri_cin ();
-  QSqlQueryModel * tri_nom ();
-  QSqlQueryModel * tri_prenom ();
-  QSqlQueryModel * tri_email ();
- QSqlQueryModel * afficher_HIS();
-  bool supprimerh (int);
-  float nbre_totalea();
-  float nbre_totale() ;
-  float nbre_totales();
-  float nbre_totalem();
+//  QSqlQueryModel* afficherTri(int) ;
+    QSqlQueryModel * tri_cin ();
+    QSqlQueryModel * tri_nom ();
+    QSqlQueryModel * tri_prenom ();
+    QSqlQueryModel * tri_email ();
+    QSqlQueryModel * afficher_HIS();
+    bool supprimerh (int);
+    float nbre_totalea();
+    float nbre_totale() ;
+    float nbre_totales();
+    float nbre_totalem();
 
 
 
