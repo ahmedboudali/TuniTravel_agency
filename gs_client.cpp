@@ -408,8 +408,10 @@ void gs_client::stat_his()
 
         // Define slices and percentage of whole they take up
         QPieSeries *series = new QPieSeries();
-        series->append("In Progress",c1);
-        series->append("Done",c2);
+        series->append("Ajouter",c1);
+        series->append("Rechercher",c2);
+        series->append("Supprimer",c3);
+        series->append("Modifier",c4);
 
 
 
