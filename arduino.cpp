@@ -24,16 +24,20 @@ QSerialPort *Arduino::getserial()
 {
    return serial;
 }
-int Arduino::connect_arduino()
+int Arduino::connect_arduino_a()
 {   // recherche du port sur lequel la carte arduino identifée par  arduino_uno_vendor_id
     // est connectée
-    foreach (const QSerialPortInfo &serial_port_info, QSerialPortInfo::availablePorts()){
-           if(serial_port_info.hasVendorIdentifier() && serial_port_info.hasProductIdentifier()){
-               if(serial_port_info.vendorIdentifier() == arduino_uno_vendor_id && serial_port_info.productIdentifier()
-                       == arduino_uno_producy_id) {
+    foreach (const QSerialPortInfo &serial_port_info, QSerialPortInfo::availablePorts())
+    {
+           if(serial_port_info.hasVendorIdentifier() && serial_port_info.hasProductIdentifier())
+           {
+               if(serial_port_info.vendorIdentifier() == arduino_uno_vendor_id_1 && serial_port_info.productIdentifier()== arduino_uno_producy_id_2)
+               {
                    arduino_is_available = true;
                    arduino_port_name=serial_port_info.portName();
-               } } }
+               }
+           }
+    }
         qDebug() << "arduino_port_name is :" << arduino_port_name;
         if(arduino_is_available){ // configuration de la communication ( débit...)
             serial->setPortName(arduino_port_name);
@@ -49,7 +53,37 @@ int Arduino::connect_arduino()
         }
         return -1;
 }
-
+/*
+int Arduino::connect_arduino_k()
+{   // recherche du port sur lequel la carte arduino identifée par  arduino_uno_vendor_id
+    // est connectée
+    foreach (const QSerialPortInfo &serial_port_info, QSerialPortInfo::availablePorts())
+    {
+           if(serial_port_info.hasVendorIdentifier() && serial_port_info.hasProductIdentifier())
+           {
+               if(serial_port_info.vendorIdentifier() == arduino_uno_vendor_id_k && serial_port_info.productIdentifier()== arduino_uno_producy_id_k)
+               {
+                   arduino_is_available = true;
+                   arduino_port_name=serial_port_info.portName();
+               }
+           }
+    }
+        qDebug() << "arduino_port_name is :" << arduino_port_name;
+        if(arduino_is_available){ // configuration de la communication ( débit...)
+            serial->setPortName(arduino_port_name);
+             if(serial->open(QSerialPort::ReadWrite)){
+                serial->setBaudRate(QSerialPort::Baud9600); // débit : 9600 bits/s
+                serial->setDataBits(QSerialPort::Data8); //Longueur des données : 8 bits,
+                serial->setParity(QSerialPort::NoParity); //1 bit de parité optionnel
+                serial->setStopBits(QSerialPort::OneStop); //Nombre de bits de stop : 1
+                serial->setFlowControl(QSerialPort::NoFlowControl);
+                return 0;
+            }
+            return 1;
+        }
+        return -1;
+}
+*/
 int Arduino::close_arduino()
 
 {

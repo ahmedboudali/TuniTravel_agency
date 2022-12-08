@@ -9,7 +9,9 @@ class Arduino
 {
 public:     //méthodes de la classe Arduino
    Arduino();
-    int connect_arduino(); // permet de connecter le PC à Arduino
+    int connect_arduino_a(); // permet de connecter le PC à Arduino
+    int connect_arduino_k(); // permet de connecter le PC à Arduino
+
     int close_arduino(); // permet de femer la connexion
     int write_to_arduino( QByteArray ); // envoyer des données vers arduino
     QByteArray read_from_arduino();  //recevoir des données de la carte Arduino
@@ -26,8 +28,14 @@ private:
 
 QSerialPort * serial; //Cet objet rassemble des informations (vitesse, bits de données, etc.)
 //et des fonctions (envoi, lecture de réception,…) sur ce qu’est une voie série pour Arduino.
-static const quint16 arduino_uno_vendor_id=9025;
-static const quint16 arduino_uno_producy_id=67;
+
+static const quint16 arduino_uno_vendor_id_1=9025;
+static const quint16 arduino_uno_producy_id_2=67;
+
+/*
+static const quint16 arduino_uno_vendor_id_k=6790;
+static const quint16 arduino_uno_producy_id_k=29987;
+*/
 QString arduino_port_name;
 bool arduino_is_available;
 QByteArray data;  // contenant les données lues à partir d'Arduino

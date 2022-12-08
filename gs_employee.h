@@ -94,6 +94,8 @@ private slots:
 
      void on_lineEdit_idrecherche_e_textChanged(const QString &arg1);
 
+     void on_pushButton_clicked();
+
 private:
 
     Ui::gs_employee *ui;

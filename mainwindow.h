@@ -8,7 +8,7 @@
 #include "gs_client.h"
 #include "dialog.h"
 #include "gs_offre.h"
-
+#include "gs_partenaire.h"
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class MainWindow; }
@@ -33,12 +33,17 @@ private slots:
 
     void on_pushButton_gs_o_clicked();
 
+    void on_pushButton_gs_login_clicked();
+
+    void on_pushButton_gs_p_clicked();
+
 private:
     Ui::MainWindow *ui;
     gs_employee *GS_employee;
     gs_client *GS_client;
    Dialog *dialog;
    gs_offre *Gs_offre;
+   gs_partenaire *Gs_partenaire;
 
 };
 

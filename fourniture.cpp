@@ -111,7 +111,7 @@ bool fourniture::modifier(QString reference)
 
 bool fourniture::genererPDF()
 {
-    QPdfWriter pdf("C:/Users/dell/Documents/NOTION/2eme année (2-A-27)/subjects/Projet C++/Integration FINALE/Dossier PDF/fourniture.pdf");
+    QPdfWriter pdf("C:/Users/dell/Documents/NOTION/2eme année (2-A-27)/subjects/Projet C++/Integration FINALE/Dossier PDF/mypdf_file_fourniture.pdf");
     QPainter painter(&pdf);
     const QString &date=QDateTime::currentDateTime().toString("dd/MM/yyyy");
     qDebug()<<date;

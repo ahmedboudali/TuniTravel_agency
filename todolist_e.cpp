@@ -59,9 +59,8 @@ bool todolist_e::supprimer_task(int ID_TASK_E)
     QSqlQuery query;
     QString id_string=QString::number(ID_TASK_E);
 
-    query.prepare("Delete from DB_EMPLOYEE_TODOLIST where ID_TASK_E='"+id_string+"'");
-query.bindValue(":ID_TASK_E",id_string);
-    //query.bindValue(0, ID_TASK_E);
+    query.prepare("Delete from DB_EMPLOYEE_TODOLIST where ID_TASK_E=:ID_TASK_E");
+     query.bindValue(0, ID_TASK_E);
 
 return query.exec();
 

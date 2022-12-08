@@ -1,7 +1,7 @@
 #include "gs_offre.h"
 #include "ui_gs_offre.h"
 
-
+#include "mainwindow.h"
 #include <QString>
 #include<QTextStream>
 #include<QTextDocument>
@@ -28,7 +28,7 @@
 #include <QNetworkAccessManager>
 #include <QNetworkReply>
 #include <QHttpPart>
-#include "arduino.h"
+#include "arduino_kd.h"
 
 
 
@@ -44,6 +44,15 @@ gs_offre::gs_offre(QWidget *parent) :
     C.connect_arduino();
     connect(&timer, SIGNAL(timeout()), this,SLOT(check()));
     timer.start(20);*/
+    int ret=C.connect_arduino(); // lancer la connexion à arduino
+    switch(ret){
+    case(0):qDebug()<< "arduino is available and connected to : "<< C.getarduino_port_name();
+        break;
+    case(1):qDebug() << "arduino is available but not connected to :" <<C.getarduino_port_name();
+       break;
+    case(-1):qDebug() << "arduino is not available";
+    }
+check();
 }
 
 gs_offre::~gs_offre()
@@ -76,6 +85,7 @@ void gs_offre::on_pb_ajouter_clicked()
        QMessageBox::critical(nullptr,QObject::tr("Not OK"),
                              QObject::tr("Ajout non effectué.\n"
                                          "Click Cancel to exit."), QMessageBox::Cancel);
+
 }
 
 //**********************
@@ -101,6 +111,7 @@ void gs_offre::on_pb_supp_clicked()
 void gs_offre::on_pb_modifier_clicked()
 {
     click->play();
+
 
         QString id=ui->identifiantm->text();
         QString prix=ui->prixm->text();
@@ -314,12 +325,7 @@ void gs_offre::on_trin_toggled(bool checked)
 
 
 
-void gs_offre::on_offButton_clicked()
-{
-    click->play();
-    saveInDB();
-    C.write_to_arduino("s");
-}
+
 void gs_offre::on_refreshButton_fire_clicked()
 {
     click->play();
@@ -330,9 +336,9 @@ void gs_offre::on_refreshButton_fire_clicked()
    // qDebug()<<data;
     //qDebug()<<result;
     if (result == 1 )
-        ui->fire->setText("FIRE");
+        ui->label_9->setText("FIRE");
     else
-        ui->fire->setText("NO FIRE");
+        ui->label_9->setText("NO FIRE");
 }
 
 
@@ -359,8 +365,8 @@ void gs_offre::on_refreshButton_clicked()
 }
 
 
-void gs_offre::check()
-{
+
+void gs_offre::check(){
 //    click->play();
 
     QString data = C.read_from_arduino();
@@ -370,11 +376,20 @@ void gs_offre::check()
         result = 0;
     else
         result = dataList[1].toInt();
-    //qDebug()<<data;
-    //qDebug()<<result;
+ // qDebug()<<data;
+   qDebug()<<result;
     if (result == 1 ){
-        ui->fire->setText("FIRE");
+        ui->label_9->setText("FIRE");
     }
     else
-        ui->fire->setText("NO FIRE");
+        ui->label_9->setText("NO FIRE");
 }
+void gs_offre::on_pushButton_clicked()
+{
+    close();
+    MainWindow *w ;
+    w = new MainWindow (this);
+    w->show();
+}
+
+

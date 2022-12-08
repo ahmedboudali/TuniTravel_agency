@@ -11,7 +11,7 @@
 #include"todolist_e.h"
 
 #include "arduino.h"
-
+#include "mainwindow.h"
 //*************
 #include <QIntValidator>
 #include <QTextStream>
@@ -66,6 +66,32 @@ gs_employee::gs_employee(QWidget *parent) :
    ui->comboBox_id_task_1->setModel(model2);
    ui->comboBox_id_task_2->setModel(model2);
 
+
+   //*********************************************
+ //  ui->lineEdit_cind->setValidator(new QIntValidator(0,999999999, this));
+   ui->lineEdit_numerotel_e->setValidator(new QIntValidator(0,99999999, this));
+      ui->lineEdit_numerotelmod_e->setValidator(new QIntValidator(0,99999999, this));
+    ui->lineEdit_cinmod_e->setValidator(new QIntValidator(0,99999999, this));
+ ui->lineEdit_id_e->setValidator(new QIntValidator(0,9999, this));
+ ui->lineEdit_motpass_e->setValidator(new QIntValidator(0,9999, this));
+
+ ui->lineEdit_heure_e->setValidator(new QIntValidator(0,99, this));
+  ui->lineEdit_heuremod_e->setValidator(new QIntValidator(0,99, this));
+
+ ui->lineEdit_salaire_e->setValidator(new QIntValidator(0,99999, this));
+ui->lineEdit_salairemod_e->setValidator(new QIntValidator(0,99999, this));
+
+   ui->lineEdit_nom_e ->setValidator(new QRegExpValidator(QRegExp("[A-Za-z- _]+"), this ));
+      ui->lineEdit_nommod_e ->setValidator(new QRegExpValidator(QRegExp("[A-Za-z- _]+"), this ));
+      ui->lineEdit_prenom_e ->setValidator(new QRegExpValidator(QRegExp("[A-Za-z- _]+"), this ));
+         ui->lineEdit_prenommod_e ->setValidator(new QRegExpValidator(QRegExp("[A-Za-z- _]+"), this ));
+
+
+/*   ui->lineEdit_prenomd ->setValidator(new QRegExpValidator(QRegExp("[A-Za-z- _]+"), this ));
+   ui->lineEdit_emaild ->setValidator(new QRegExpValidator(QRegExp("[A-Za-z-@. _]+"), this ));
+   ui->lineEdit_adressed ->setValidator(new QRegExpValidator(QRegExp("[A-Za-z- _]+"), this ));
+   */
+//*******
 
    stat_todolist();
 
@@ -281,7 +307,7 @@ void gs_employee::on_pushButton_modifier_metier_clicked()
     }
     else
    {
-    msgBox->setText("verifier votre JDID mot de passe !");
+    msgBox->setText("verifier votre neauveau mot de passe !");
     msgBox->show();
     }
 
@@ -360,7 +386,7 @@ void gs_employee::on_pushButton_3_clicked()
         //document.setHtml(html);
         QPrinter printer(QPrinter::PrinterResolution);
         printer.setOutputFormat(QPrinter::PdfFormat);
-        printer.setOutputFileName("C:/QT pdf files/mypdf_file_employee.pdf");
+        printer.setOutputFileName("C:/Users/dell/Documents/NOTION/2eme année (2-A-27)/subjects/Projet C++/Integration FINALE/Dossier PDF/mypdf_file_employee.pdf");
         document->print(&printer);
 
          msgBox= new QMessageBox(this);
@@ -436,7 +462,7 @@ void gs_employee::on_pushButton_supprimer_e_2_clicked()  //mmmmmmmmmmmmmmmmmmmmm
     //SUpprimer
     todolist_e E;
     E.setId_task(ui->comboBox_id_task_1->currentText().toInt());
-    bool test=E.supprimer_task(ui->comboBox_id_task_1->currentText().toInt());
+    bool test=E.supprimer_task(E.getId_task());
     msgBox= new QMessageBox(this);
     if(test)
     {
@@ -602,4 +628,12 @@ void gs_employee::on_lineEdit_idrecherche_e_textChanged(const QString &arg1)
         ui->tab_employee->setModel(Etmp.afficher());
 
     }
+}
+
+void gs_employee::on_pushButton_clicked()
+{
+    close();
+    MainWindow *w ;
+    w = new MainWindow (this);
+    w->show();
 }

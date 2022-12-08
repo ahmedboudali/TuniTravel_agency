@@ -4,7 +4,7 @@
 
 #include <QDialog>
 #include "offre.h"
-#include "arduino.h"
+
 #include <QList>
 #include <QDate>
 #include <QTextBrowser>
@@ -13,6 +13,7 @@
 #include <QNetworkReply>
 #include <QSound>
 #include <QtMultimedia/QMediaPlayer>
+#include "arduino_kd.h"
 namespace Ui {
 class gs_offre;
 }
@@ -76,17 +77,23 @@ private slots :
 
     void on_lineEdit_textEdited(const QString &arg1);
 
+    void on_pushButton_clicked();
+
+    //void on_offButton_2_clicked();
+
 private:
     Ui::gs_offre *ui;
 
     Offre O;
-    Arduino C;
+    arduino C;
     QTimer timer;
     QList<QString> dataList ;
     QNetworkAccessManager * manager;
     QNetworkRequest request;
     QSound *click;
    // gs_offre *Gs_offre;
+  //  Arduino A; // objet temporaire
+
 
 
 };

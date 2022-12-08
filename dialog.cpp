@@ -5,7 +5,7 @@
 #include<QMessageBox>
 //#include "connection.h"
 #include <QTableView>
-
+#include "mainwindow.h"
 #include <QMessageBox>
 Dialog::Dialog(QWidget *parent) :
     QDialog(parent),
@@ -391,4 +391,12 @@ void Dialog::on_pushButton_3_clicked()
     q.bindValue(":etat","Bonne");
     q.exec();
     ui->tableView2->setModel(fourniture().afficherenpanne());
+}
+
+void Dialog::on_pushButton_4_clicked()
+{
+    close();
+    MainWindow *w ;
+    w = new MainWindow (this);
+    w->show();
 }

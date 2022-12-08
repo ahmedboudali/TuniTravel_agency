@@ -22,7 +22,7 @@ login::login(QWidget *parent) :
   // ui->tableWidget_pass->setModel(Etmp.afficher_m());
 
 
-   int ret=A.connect_arduino(); // lancer la connexion à arduino
+  int ret=A.connect_arduino_a(); // lancer la connexion à arduino
    switch(ret){
    case(0):qDebug()<< "arduino is available and connected to : "<< A.getarduino_port_name();
        break;
@@ -143,7 +143,7 @@ void login::on_pushButton_signin_login_clicked()
           username_arduino = ui->comboBox_id->currentText().toUtf8();
           A.write_to_arduino(username_arduino); //envoyer id à arduino
 
-          hide();                                  //el menu eli bich n7ilo ki el login yi5dim (pt3.1)
+          close();                                  //el menu eli bich n7ilo ki el login yi5dim (pt3.1)
           mainWindow = new MainWindow(this);       //el menu eli bich n7ilo ki el login yi5dim (pt3.2)
           mainWindow->show();                      //el menu eli bich n7ilo ki el login yi5dim (pt3.f)
     }
